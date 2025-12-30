@@ -10,7 +10,7 @@ pipeline {
 
         stage('Deploy Website') {
             steps {
-                bat 'docker run -d -p 8080:80 cicd-website'
+                bat 'docker run -d -p 8081:80 cicd-website'
             }
         }
     }
