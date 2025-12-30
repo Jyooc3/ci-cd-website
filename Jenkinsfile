@@ -14,9 +14,24 @@ pipeline {
       }
     }
 
+    stage('Cleanup Old Container') {
+      steps {
+        bat '''
+        docker ps -aq --filter "name=campus-events" > temp.txt
+        set /p CID=<temp.txt
+        if not "%CID%"=="" (
+          docker stop campus-events
+          docker rm campus-events
+        ) else (
+          echo No existing container
+        )
+        del temp.txt
+        '''
+      }
+    }
+
     stage('Run Container') {
       steps {
-        bat 'docker rm -f campus-events || exit 0'
         bat 'docker run -d --name campus-events -p 5000:5000 campus-events'
       }
     }
