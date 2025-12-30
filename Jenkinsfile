@@ -32,7 +32,7 @@ pipeline {
 
     stage('Run Container') {
       steps {
-        bat 'docker run -d --name campus-events -p 5000:5000 campus-events'
+        bat 'docker run -d --name campus-events -p 5001:5000 campus-events'
       }
     }
   }
