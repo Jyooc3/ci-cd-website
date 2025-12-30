@@ -10,14 +10,14 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t campus-events .'
+        bat 'docker build -t campus-events .'
       }
     }
 
     stage('Run Container') {
       steps {
-        sh 'docker rm -f campus-events || true'
-        sh 'docker run -d --name campus-events -p 5000:5000 campus-events'
+        bat 'docker rm -f campus-events || exit 0'
+        bat 'docker run -d --name campus-events -p 5000:5000 campus-events'
       }
     }
   }
