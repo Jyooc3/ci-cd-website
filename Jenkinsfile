@@ -1,27 +1,33 @@
 pipeline {
   agent any
 
+  environment {
+    IMAGE_NAME = "campus-events-backend"
+    CONTAINER_NAME = "campus-events"
+  }
+
   stages {
-    stage('Clone Repo') {
+
+    stage('Checkout Code') {
       steps {
         checkout scm
       }
     }
 
-    stage('Build Docker Image') {
+    stage('Build Backend Image') {
       steps {
-        bat 'docker build -t campus-events .'
+        bat 'docker build --no-cache -t %IMAGE_NAME% ./backend'
       }
     }
 
-    stage('Cleanup Old Container') {
+    stage('Stop & Remove Old Container') {
       steps {
         bat '''
-        docker ps -aq --filter "name=campus-events" > temp.txt
+        docker ps -aq --filter "name=%CONTAINER_NAME%" > temp.txt
         set /p CID=<temp.txt
         if not "%CID%"=="" (
-          docker stop campus-events
-          docker rm campus-events
+          docker stop %CONTAINER_NAME%
+          docker rm %CONTAINER_NAME%
         ) else (
           echo No existing container
         )
@@ -30,10 +36,11 @@ pipeline {
       }
     }
 
-    stage('Run Container') {
+    stage('Run Backend Container') {
       steps {
-        bat 'docker run -d --name campus-events -p 5001:5000 campus-events'
+        bat 'docker run -d --name %CONTAINER_NAME% -p 5001:5000 %IMAGE_NAME%'
       }
     }
+
   }
 }
